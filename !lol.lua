@@ -2,7 +2,7 @@
 --local notf = require("notifications")
 local res, version = pcall(getMoonloaderVersion)
 if not res or version < 26 then
-    print('Р—Р°РїСѓСЃРє СЃРєСЂРёРїС‚Р° РЅРµРІРѕР·РјРѕР¶РµРЅ. РЎРєСЂРёРїС‚ СЂР°Р±РѕС‚Р°РµС‚ РЅР° РІРµСЂСЃРёРё MoonLoader 0.26 РёР»Рё РІС‹С€Рµ!')
+    print('Запуск скрипта невозможен. Скрипт работает на версии MoonLoader 0.26 или выше!')
 end
 local ava = nil
 script_name('Arizona Helper')
@@ -79,7 +79,7 @@ ffi.cdef[[
 local imgui = require('mimgui')
 local fa = require('fAwesome6_solid')
 
----------------РѕРєРЅР° MIMGUI-------------------
+---------------окна MIMGUI-------------------
 local renderWindow = imgui.new.bool()
 local calculator = imgui.new.bool()
 local packetsWindow = imgui.new.bool()
@@ -102,7 +102,7 @@ local dialoId = imgui.new.bool()
 
 local musorLovlya = false
 local savedArg = nil
-----------------РћСЃРЅРѕРІРЅРѕРµ[1]-------------------
+----------------Основное[1]-------------------
 local settings = {
     main = {
         serverTime = imgui.new.bool(ini.main.serverTime),
@@ -142,27 +142,27 @@ local ticketOpened = false
 local blockCode = false
 keyToggle = VK_MBUTTON
 keyApply = VK_LBUTTON
-----------------РРіСЂРѕРє[2]----------------------
+----------------Игрок[2]----------------------
 local inputField = imgui.new.char[256]()
 local aspInput = imgui.new.char[50]()
-----------------РҐРµР»РїРµСЂС‹[3]--------------------
-local ComboTest = imgui.new.int() -- СЃРѕР·РґР°С‘Рј Р±СѓС„РµСЂ РґР»СЏ РєРѕРјР±Рѕ
-local item_list = {u8'РЎС‡Р°СЃС‚Р»РёРІР°СЏ С‚СЂР°РІРєР°', u8'Р РµРЅРґРµСЂ', u8'РўСЂР°РЅСЃРїРѕСЂС‚', u8'РЎРµРєРѕРЅРґ РҐРµРЅРґ', '4', '5'} -- СЃРѕР·РґР°С‘Рј С‚Р°Р±Р»РёС†Сѓ СЃ СЃРѕРґРµСЂР¶РёРјС‹Рј СЃРїРёСЃРєР°
+----------------Хелперы[3]--------------------
+local ComboTest = imgui.new.int() -- создаём буфер для комбо
+local item_list = {u8'Счастливая травка', u8'Рендер', u8'Транспорт', u8'Секонд Хенд', '4', '5'} -- создаём таблицу с содержимым списка
 local ImItems = imgui.new['const char*'][#item_list](item_list)
 
--------------РќР°СЃС‚СЂРѕР№РєРё > РёР·РјРµРЅРµРЅРёРµ С‚РµРјС‹-----------------
+-------------Настройки > изменение темы-----------------
 local themeBufer = imgui.new.int()
-local theme_list = {u8'Р¤РёРѕР»РµС‚РѕРІР°СЏ', u8'РЎРµСЂР°СЏ', u8'Р—РµР»РµРЅР°СЏ'}
+local theme_list = {u8'Фиолетовая', u8'Серая', u8'Зеленая'}
 local themeItems = imgui.new['const char*'][#theme_list](theme_list)
 
 -- local radiusTravki = imgui.new.bool()
 -- local narko = imgui.new.bool()
-----------------РќР°СЃС‚СЂРѕР№РєРё[6]------------------
+----------------Настройки[6]------------------
 local configInput = imgui.new.char[256]()
 
-----------------Р”Р»СЏ СЂР°Р·СЂР°Р±РѕС‚РєРё-----------------
-local devCombo = imgui.new.int() -- СЃРѕР·РґР°С‘Рј Р±СѓС„РµСЂ РґР»СЏ РєРѕРјР±Рѕ
-local item_listTools = {u8'Р“Р»Р°РІРЅРѕРµ', u8'РљР°СЃС‚РѕРјРЅС‹Рµ РїР°РєРµС‚С‹ ARZ', u8'РџР°РєРµС‚С‹/СЂРїСЃ', '3', '4', '5'} -- СЃРѕР·РґР°С‘Рј С‚Р°Р±Р»РёС†Сѓ СЃ СЃРѕРґРµСЂР¶РёРјС‹Рј СЃРїРёСЃРєР°
+----------------Для разработки-----------------
+local devCombo = imgui.new.int() -- создаём буфер для комбо
+local item_listTools = {u8'Главное', u8'Кастомные пакеты ARZ', u8'Пакеты/рпс', '3', '4', '5'} -- создаём таблицу с содержимым списка
 local devItems = imgui.new['const char*'][#item_listTools](item_listTools)
 local packetRpcLogger = imgui.new.bool()
 
@@ -185,14 +185,14 @@ local menuItemsData = {
     currentPage = 1,
 
     menuButtons = {
-        {name=u8('РћСЃРЅРѕРІРЅРѕРµ'), icon=fa.HOUSE, i = 1},
-        {name=u8('РРіСЂРѕРє'), icon=fa.USER, i = 2},
-        {name=u8('Р’РёР·СѓР°Р»С‹'), icon=fa.TRASH, i = 3},
-        {name=u8('РҐРµР»РїРµСЂС‹'), icon=fa.CIRCLE_INFO, i = 4},
-        {name=u8('РђС„Рє С„Р°СЂРј'), icon=fa.ADDRESS_BOOK, i = 5, release = 1},
-        {name=u8('РќР°СЃС‚СЂРѕР№РєРё'), icon=fa.GEAR, i = 6},
-        {name=u8('Р”Р»СЏ СЂР°Р·СЂР°Р±РѕС‚РєРё'), icon=fa.ELLIPSIS, i = 7},
-        {name=u8('Р—Р°РєСЂС‹С‚СЊ'), icon=fa.TOOLBOX, i = 8},
+        {name=u8('Основное'), icon=fa.HOUSE, i = 1},
+        {name=u8('Игрок'), icon=fa.USER, i = 2},
+        {name=u8('Визуалы'), icon=fa.TRASH, i = 3},
+        {name=u8('Хелперы'), icon=fa.CIRCLE_INFO, i = 4},
+        {name=u8('Афк фарм'), icon=fa.ADDRESS_BOOK, i = 5, release = 1},
+        {name=u8('Настройки'), icon=fa.GEAR, i = 6},
+        {name=u8('Для разработки'), icon=fa.ELLIPSIS, i = 7},
+        {name=u8('Закрыть'), icon=fa.TOOLBOX, i = 8},
     }
 }
 local op = {
@@ -205,7 +205,7 @@ local selmenu = 1
 local listop = {
 	{
 		flag = 0,
-		title = "РћСЃРЅРѕРІРЅРѕРµ",
+		title = "Основное",
 		icon = fa.HOUSE,
 		h = {
 			t = 0,
@@ -214,7 +214,7 @@ local listop = {
 	},
 	{
 		flag = 0,
-		title = "РРіСЂРѕРє",
+		title = "Игрок",
 		icon = fa.USER,
 		h = {
 			t = 0,
@@ -223,7 +223,7 @@ local listop = {
 	},
 	{
 		flag = 0,
-		title = "Р’РёР·СѓР°Р»С‹",
+		title = "Визуалы",
 		icon = fa.COMMENT_MEDICAL,
 		h = {
 			t = 0,
@@ -232,7 +232,7 @@ local listop = {
 	},
 	{
 		flag = 0,
-		title = "РҐРµР»РїРµСЂС‹",
+		title = "Хелперы",
 		icon = fa.CIRCLE_INFO,
 		h = {
 			t = 0,
@@ -241,8 +241,8 @@ local listop = {
 	},
     {
 		flag = 4,
-		title = "РђС„Рє С„Р°СЂРј",
-        soon = "Р’ СЂР°Р·СЂР°Р±РѕС‚РєРµ..",
+		title = "Афк фарм",
+        soon = "В разработке..",
 		icon = fa.ADDRESS_BOOK,
 		h = {
 			t = 0,
@@ -251,7 +251,7 @@ local listop = {
 	},
     {
 		flag = 0,
-		title = "РќР°СЃС‚СЂРѕР№РєРё",
+		title = "Настройки",
 		icon = fa.GEAR,
 		h = {
 			t = 0,
@@ -260,7 +260,7 @@ local listop = {
 	},
     {
 		flag = 0,
-		title = "Р”Р»СЏ СЂР°Р·СЂР°Р±РѕС‚РєРё",
+		title = "Для разработки",
 		icon = fa.ELLIPSIS,
 		h = {
 			t = 0,
@@ -269,7 +269,7 @@ local listop = {
 	},
     {
 		flag = 0,
-		title = "Р—Р°РєСЂС‹С‚СЊ",
+		title = "Закрыть",
 		icon = fa.TOOLBOX,
 		h = {
 			t = 0,
@@ -303,26 +303,26 @@ local newFrame = imgui.OnFrame(
             imgui.SameLine()
             if selmenu == 1 then
                 imgui.SetCursorPosX(520)
-                imgui.Text(u8'РћСЃРЅРѕРІРЅРѕРµ')
+                imgui.Text(u8'Основное')
                 imgui.SetCursorPos(imgui.ImVec2(210, 23))
                 imgui.BeginChild('qweqweewe', imgui.ImVec2(-1, 472), true)
                     if imgui.ToggleButton('Server time', settings.main.serverTime) then serverTime() end
                     imgui.ToggleButton('Money seperator', settings.main.moneySeperator)
                     imgui.ToggleButton('Calculator', settings.main.calcOn)
-                    imgui.ToggleButton(u8'Р¦РІРµС‚РЅС‹Рµ РЅРёРєРё РІ С‡Р°С‚Рµ', settings.main.chat_nick)
-                    imgui.ToggleButton(u8'РђРІС‚Рѕ С€Р°СЂ/РґРµР»СЊС‚Р°РїР»Р°РЅ', settings.player.autoDeltShar)
-                    imgui.ToggleButton(u8'РђРґРјРёРЅ С‡РµРєРµСЂ', adminCheker)
-                    imgui.ToggleButton(u8'piss РЅР° E', piss)
+                    imgui.ToggleButton(u8'Цветные ники в чате', settings.main.chat_nick)
+                    imgui.ToggleButton(u8'Авто шар/дельтаплан', settings.player.autoDeltShar)
+                    imgui.ToggleButton(u8'Админ чекер', adminCheker)
+                    imgui.ToggleButton(u8'piss на E', piss)
                     if imgui.ToggleButton('cj run', cjrun) then cmd_cjrun() end
-                    imgui.ToggleButton(u8'РЈРІРµРґРѕРјР»РµРЅРёРµ Рѕ PAYDAY', paydayMessage)
+                    imgui.ToggleButton(u8'Уведомление о PAYDAY', paydayMessage)
                     imgui.ToggleButton(u8'Auto open az ticket', autoAzticket)
-                    imgui.ToggleButton(u8'РђРЅС‚Рё-РґР°Р»Р±Р°РµР± СЂРµР¶РёРј', test)
+                    imgui.ToggleButton(u8'Анти-далбаеб режим', test)
                     imgui.ToggleButton('clickwarp', clickwarp)
-                    imgui.ToggleButton(u8'РћС‡РёСЃС‚РєР° РїР°РјСЏС‚Рё СЃС‚СЂРёРјР° (РѕС‡РёСЃС‚РєР° РїСЂРё 400РјР±)', autoBufferClear)
+                    imgui.ToggleButton(u8'Очистка памяти стрима (очистка при 400мб)', autoBufferClear)
                 imgui.EndChild()
             elseif selmenu == 2 then
                 imgui.SetCursorPosX(520)
-                imgui.Text(u8'РРіСЂРѕРє')
+                imgui.Text(u8'Игрок')
                 imgui.SetCursorPos(imgui.ImVec2(210, 23))
                 imgui.BeginChild('qweqweewe', imgui.ImVec2(-1, 472), true)
                 -- for iter_517_0, iter_517_1 in ipairs(listop) do
@@ -335,22 +335,22 @@ local newFrame = imgui.OnFrame(
                 -- end
                     --selMenuB('title', fa.HOUSE, 0, op.h, 1, false)
                     --selMenuB('title', fa.HOUSE, 0, op.h, 2, false)
-                    if imgui.ToggleButton(u8'РЎР±РёРІ РЅР° E', settings.player.sbivAnimation) then sbivAnimation() end
+                    if imgui.ToggleButton(u8'Сбив на E', settings.player.sbivAnimation) then sbivAnimation() end
                     replaceNickname = u8:decode(ffi.string(inputField))
-                    if imgui.ToggleButton(u8'Р‘РµСЃСЃРјРµСЂС‚РёРµ', settings.player.godmode) then godmode() end
+                    if imgui.ToggleButton(u8'Бессмертие', settings.player.godmode) then godmode() end
 
                     imgui.SameLine()
 
-                    imgui.TextQuestion(u8'Р’РёР·СѓР°Р»СЊРЅРѕ РјРµРЅСЏРµС‚ РЅРёРєРЅРµР№Рј РІ С‡Р°С‚Рµ')
-                    imgui.ToggleButton(u8'Р‘РµСЃРєРѕРЅРµС‡РЅС‹Р№ Р±РµРі', settings.player.infinityRun)
-                    if imgui.ToggleButton(u8"Р‘РµРі РїСЂРё РіРѕР»РѕРґРµ", hungryRun) then fhungryRun() end
+                    imgui.TextQuestion(u8'Визуально меняет никнейм в чате')
+                    imgui.ToggleButton(u8'Бесконечный бег', settings.player.infinityRun)
+                    if imgui.ToggleButton(u8"Бег при голоде", hungryRun) then fhungryRun() end
 
 
                     imgui.PushItemWidth(150)
                     imgui.InputText(u8"", inputField, 256)
                     imgui.PopItemWidth()
                     imgui.SameLine()
-                    if imgui.Button(u8'РЎР±СЂРѕСЃРёС‚СЊ', imgui.ImVec2(73, 25)) then
+                    if imgui.Button(u8'Сбросить', imgui.ImVec2(73, 25)) then
                         ffi.fill(inputField, 256, 0)
                         ffi.copy(inputField, nickname)
                     end
@@ -358,14 +358,14 @@ local newFrame = imgui.OnFrame(
                 imgui.EndChild()
             elseif selmenu == 3 then
                 imgui.SetCursorPosX(520)
-                imgui.Text(u8'Р’РёР·СѓР°Р»С‹')
+                imgui.Text(u8'Визуалы')
                 imgui.SetCursorPos(imgui.ImVec2(210, 23))
                 imgui.BeginChild('qwe213qweewe', imgui.ImVec2(-1, 472), true)
                     if imgui.ToggleButton('Fov', settings.player.fov) then fov() end
                         if settings.player.fov[0] then
                             imgui.SameLine()
                             imgui.PushItemWidth(140)
-                            imgui.SliderFloat(u8'РџРѕР»Рµ Р·СЂРµРЅРёСЏ', settings.player.fovslider, 20.0, 125.0)
+                            imgui.SliderFloat(u8'Поле зрения', settings.player.fovslider, 20.0, 125.0)
                             imgui.PopItemWidth()
                         end
                         
@@ -375,44 +375,44 @@ local newFrame = imgui.OnFrame(
                         imgui.InputText('##1', aspInput, 50)
                         aspDecode = u8:decode(ffi.string(aspInput))
                         imgui.SameLine()
-                        if imgui.Button(u8'РџСЂРёРјРµРЅРёС‚СЊ', imgui.ImVec2(73, 25)) then
+                        if imgui.Button(u8'Применить', imgui.ImVec2(73, 25)) then
                             arg = tonumber(aspDecode)
                             memory.setfloat(0xC3EFA4, arg, true)
                         end
                     else
                         --memory.setfloat(0xC3EFA4, 1.333, true)
                     end
-                    if imgui.ToggleButton(u8'РІС… РЅР° РЅРёРєРё', settings.player.wallhackNickname) then fWallhackNickname() end
-                    if imgui.ToggleButton(u8'РІС… СЃРєРµР»РµС‚', settings.player.whSkelet) then wallhackSkeletLox() end
+                    if imgui.ToggleButton(u8'вх на ники', settings.player.wallhackNickname) then fWallhackNickname() end
+                    if imgui.ToggleButton(u8'вх скелет', settings.player.whSkelet) then wallhackSkeletLox() end
                 imgui.EndChild()
             elseif selmenu == 4 then
                 imgui.SetCursorPosX(520)
-                imgui.Text(u8'РҐРµР»РїРµСЂС‹')
+                imgui.Text(u8'Хелперы')
                 imgui.SetCursorPos(imgui.ImVec2(210, 23))
                 imgui.BeginChild('qweqweewe', imgui.ImVec2(-1, 472), true)
-                    imgui.Combo(u8'РЎРїРёСЃРѕРє',ComboTest,ImItems, #item_list)
+                    imgui.Combo(u8'Список',ComboTest,ImItems, #item_list)
                     if ComboTest[0] == 0 then
-                        imgui.ToggleButton(u8'Р Р°РґРёСѓСЃ С‚СЂР°РІРєРё', settings.helpers.radiusTravki)
+                        imgui.ToggleButton(u8'Радиус травки', settings.helpers.radiusTravki)
                     elseif ComboTest[0] == 1 then
-                        imgui.ToggleButton(u8'РќР°СЂРєРѕС‚РёРєРё', settings.helpers.narko)
-                        imgui.Text(u8'РџРѕРґР°СЂРєРё')
-                        imgui.Text(u8'Р•С‰Рµ С‡С‚Рѕ-С‚Рѕ')
+                        imgui.ToggleButton(u8'Наркотики', settings.helpers.narko)
+                        imgui.Text(u8'Подарки')
+                        imgui.Text(u8'Еще что-то')
                     elseif ComboTest[0] == 2 then
-                        imgui.ToggleButton(u8'Р‘РµСЃРєРѕРЅРµС‡РЅР°СЏ РµР·РґР°', nofuel)
-                        imgui.ToggleButton(u8'Р‘С‹СЃС‚СЂС‹Р№ С‚РѕСЂРјРѕР·', fastStop)
-                        imgui.ToggleButton(u8'РђРІС‚Рѕ Р·Р°РїСЂР°РІРєР°', autoFill)
-                        imgui.ToggleButton(u8'Р¤Р»РёРї РјР°С€РёРЅС‹', carFlip)
-                        imgui.ToggleButton(u8'РРЅС„РѕСЂРјР°С†РёРѕРЅРЅРѕРµ РјРµРЅСЋ', carMenu)
+                        imgui.ToggleButton(u8'Бесконечная езда', nofuel)
+                        imgui.ToggleButton(u8'Быстрый тормоз', fastStop)
+                        imgui.ToggleButton(u8'Авто заправка', autoFill)
+                        imgui.ToggleButton(u8'Флип машины', carFlip)
+                        imgui.ToggleButton(u8'Информационное меню', carMenu)
                     elseif ComboTest[0] == 3 then
-                        imgui.ToggleButton(u8'Р’РҐ РЅР° РѕРґРµР¶РґСѓ', test)
-                        imgui.ToggleButton(u8'РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРё РїРѕРєСѓРїР°С‚СЊ РѕРґРµР¶РґСѓ', test)
-                        imgui.ToggleButton(u8'РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРё РІС‹Р±РёСЂР°С‚СЊ РіСЂСЏР·РЅСѓСЋ РѕРґРµР¶РґСѓ', test)
-                        imgui.ToggleButton(u8'РРЅС„РѕСЂРјР°С†РёРѕРЅРЅР°СЏ РїР°РЅРµР»СЊ', test)
+                        imgui.ToggleButton(u8'ВХ на одежду', test)
+                        imgui.ToggleButton(u8'Автоматически покупать одежду', test)
+                        imgui.ToggleButton(u8'Автоматически выбирать грязную одежду', test)
+                        imgui.ToggleButton(u8'Информационная панель', test)
                     end
                 imgui.EndChild()
             elseif selmenu == 6 then
                 imgui.SetCursorPosX(520)
-                imgui.Text(u8'РќР°СЃС‚СЂРѕР№РєРё')
+                imgui.Text(u8'Настройки')
                 imgui.SetCursorPos(imgui.ImVec2(210, 23))
                 imgui.BeginChild('222', imgui.ImVec2(200, 100), true)
                     local lfs = require 'lfs'
@@ -445,10 +445,10 @@ local newFrame = imgui.OnFrame(
                             save_config()
                             inicfg.save(ini, path)
                             ffi.fill(configInput, 256, 0)
-                            sampAddChatMessage('РљРѕРЅС„РёРі СЃРѕС…СЂР°РЅС‘РЅ: ' .. filename .. '.ini', -1)
+                            sampAddChatMessage('Конфиг сохранён: ' .. filename .. '.ini', -1)
                         end
                     else
-                        --push('РћС€РёР±РєР°: РёРјСЏ РєРѕРЅС„РёРіСѓСЂР°С†РёРё РЅРµ Р·Р°РґР°РЅРѕ!')
+                        --push('Ошибка: имя конфигурации не задано!')
                     end
                 end
 
@@ -461,12 +461,12 @@ local newFrame = imgui.OnFrame(
                         if loaded and loaded.main then
                             ini = loaded
                             load_config()
-                            sampAddChatMessage('[ Arizona Helper ] {EEEEEE} РљРѕРЅС„РёРі ' .. filename .. ' СѓСЃРїРµС€РЅРѕ РїСЂРёРјРµРЅС‘РЅ', 13387077)
+                            sampAddChatMessage('[ Arizona Helper ] {EEEEEE} Конфиг ' .. filename .. ' успешно применён', 13387077)
                         else
-                            sampAddChatMessage('РћС€РёР±РєР° РїСЂРё Р·Р°РіСЂСѓР·РєРµ: ' .. filename, -1)
+                            sampAddChatMessage('Ошибка при загрузке: ' .. filename, -1)
                         end
                     else
-                        sampAddChatMessage('Р’С‹Р±РµСЂРёС‚Рµ РєРѕРЅС„РёРі РґР»СЏ Р·Р°РіСЂСѓР·РєРё!', -1)
+                        sampAddChatMessage('Выберите конфиг для загрузки!', -1)
                     end
                 end
 
@@ -476,19 +476,19 @@ local newFrame = imgui.OnFrame(
                         local filename = selInt:match("[^\\/]+$") or selInt
                         local success = os.remove(selInt)
                         if success then
-                            sampAddChatMessage('РљРѕРЅС„РёРі СѓРґР°Р»С‘РЅ: ' .. filename, -1)
+                            sampAddChatMessage('Конфиг удалён: ' .. filename, -1)
                             selInt = nil
                         else
-                            sampAddChatMessage('РќРµ СѓРґР°Р»РѕСЃСЊ СѓРґР°Р»РёС‚СЊ РєРѕРЅС„РёРі: ' .. filename, -1)
+                            sampAddChatMessage('Не удалось удалить конфиг: ' .. filename, -1)
                         end
                     else
-                        sampAddChatMessage('Р¤Р°Р№Р» РЅРµ РЅР°Р№РґРµРЅ РёР»Рё РЅРµ РІС‹Р±СЂР°РЅ!', -1)
+                        sampAddChatMessage('Файл не найден или не выбран!', -1)
                     end
                 end
                 --imgui.NewLine()
                 imgui.SetCursorPos(imgui.ImVec2(430, 28))
                 imgui.PushItemWidth(140)
-                imgui.Combo(u8'РўРµРјР°', themeBufer, themeItems, #theme_list)
+                imgui.Combo(u8'Тема', themeBufer, themeItems, #theme_list)
                 imgui.PopItemWidth()
                 if themeBufer[0] == 0 then
                 PurpleTheme()
@@ -499,16 +499,16 @@ local newFrame = imgui.OnFrame(
             end
             elseif selmenu == 7 then
                 imgui.SetCursorPosX(520)
-                imgui.Text(u8'Р”Р»СЏ СЂР°Р·СЂР°Р±РѕС‚РєРё')
+                imgui.Text(u8'Для разработки')
                 imgui.SetCursorPos(imgui.ImVec2(210, 23))
                 imgui.BeginChild('qwe213qweewe', imgui.ImVec2(-1, 472), true)
-                    imgui.Combo(u8'Р”Р»СЏ СЂР°Р·СЂР°Р±РѕС‚РєРё', devCombo, devItems, #item_listTools)
+                    imgui.Combo(u8'Для разработки', devCombo, devItems, #item_listTools)
                     imgui.BeginChild('qwe', imgui.ImVec2(-1, -1), true)
                     if devCombo[0] == 0 then
                         imgui.ToggleButton(u8'ID textdraw', textDrawId)
                         imgui.ToggleButton(u8'ID dialog', dialoId)
                     elseif devCombo[0] == 1 then
-                        if imgui.Button(u8'РћС‡РёСЃС‚РёС‚СЊ', imgui.ImVec2(400, 25)) then
+                        if imgui.Button(u8'Очистить', imgui.ImVec2(400, 25)) then
                             packets = {}
                         end imgui.SameLine()
                         if imgui.Button('W', imgui.ImVec2(-1, 25)) then
@@ -527,13 +527,13 @@ local newFrame = imgui.OnFrame(
     imgui.TextColoredRGB(text)
 
     if imgui.IsItemHovered() and imgui.IsMouseClicked(0) then
-        imgui.SetClipboardText(b.text) -- РєРѕРїРёСЂСѓРµРј С‚РѕР»СЊРєРѕ С‚РµРєСЃС‚ РїР°РєРµС‚Р°
+        imgui.SetClipboardText(b.text) -- копируем только текст пакета
         print('Copied:', b.text)
     end
 end
                         imgui.EndChild()
                     elseif devCombo[0] == 2 then
-                        if imgui.ToggleButton(u8'РћС‚РѕР±СЂР°Р·РёС‚СЊ РЅР° СЌРєСЂР°РЅРµ', packetRpcLogger) then fpacketRpcLogger() end
+                        if imgui.ToggleButton(u8'Отобразить на экране', packetRpcLogger) then fpacketRpcLogger() end
                         imgui.Text('INCOMING Packet: '..packet_incoming..'\nOUTCOMING Packet: '..packet_outcoming)
                         imgui.Text('INCOMING RPC: '..rpc_incoming..'\nOUTCOMING RPC: '..rpc_outcoming)
                     end
@@ -577,7 +577,7 @@ imgui.OnFrame(
         imgui.SetNextWindowPos(imgui.ImVec2(resX / 2, resY / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
         imgui.SetNextWindowSize(imgui.ImVec2(1000, 400), imgui.Cond.FirstUseEver)
         imgui.Begin('packetsWindow', packetsWindow, imgui.WindowFlags.NoTitleBar)
-        if imgui.Button(u8'РћС‡РёСЃС‚РёС‚СЊ', imgui.ImVec2(-1, 25)) then
+        if imgui.Button(u8'Очистить', imgui.ImVec2(-1, 25)) then
             packets = {}
         end
             imgui.BeginChild('qwe', imgui.ImVec2(-1, -1), true)
@@ -597,16 +597,16 @@ local newFrame = imgui.OnFrame(
         imgui.SetNextWindowPos(imgui.ImVec2(resX / 2, resY / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
         imgui.SetNextWindowSize(imgui.ImVec2(283, 70), imgui.Cond.FirstUseEver)
         imgui.Begin('##qweew', acceptReset, imgui.WindowFlags.NoScrollbar + imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoResize)
-        imgui.TextWrapped(u8'Р’С‹ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅРѕ С…РѕС‚РёС‚Рµ СЃРѕС…СЂР°РЅРёС‚СЊ РєРѕРЅС„РёРі? РљРѕРЅС„РёРі СЃ С‚Р°РєРёРј РЅР°Р·РІР°РЅРёРµРј СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚!')
-        if imgui.Button(u8'Р”Р°', imgui.ImVec2(130, 25)) then
+        imgui.TextWrapped(u8'Вы действительно хотите сохранить конфиг? Конфиг с таким названием уже существует!')
+        if imgui.Button(u8'Да', imgui.ImVec2(130, 25)) then
             save_config()
             inicfg.save(ini, pendingSavePath)
-            sampAddChatMessage('РљРѕРЅС„РёРі РїРµСЂРµР·Р°РїРёСЃР°РЅ: ' .. pendingSavePath:match("[^\\/]+$"), -1)
+            sampAddChatMessage('Конфиг перезаписан: ' .. pendingSavePath:match("[^\\/]+$"), -1)
             ffi.fill(inputField, 256, 0)
             acceptReset[0] = false
         end
         imgui.SameLine()
-        if imgui.Button(u8'РќРµС‚', imgui.ImVec2(130, 25)) then
+        if imgui.Button(u8'Нет', imgui.ImVec2(130, 25)) then
             acceptReset[0] = false
         end
         imgui.End()
@@ -621,9 +621,9 @@ local newFramee = imgui.OnFrame(
         imgui.SetNextWindowSize(imgui.ImVec2(330, 150), imgui.Cond.FirstUseEver)
         imgui.PushStyleColor(imgui.Col.WindowBg, imgui.ImVec4(0.07, 0.07, 0.10, 1.00))
         imgui.Begin('##information', information, imgui.WindowFlags.NoScrollbar + imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoResize)
-        imgui.Text(u8'/mus - РІРєР»СЋС‡РёС‚СЊ Р»РѕРІР»СЋ РїСЂРµРґРјРµС‚Р° РІ РјСѓСЃРѕСЂРєРµ')
-        imgui.Text(u8'/musv - СѓСЃС‚Р°РЅРѕРІРёС‚СЊ СЃР»РѕС‚ РґР»СЏ Р»РѕРІР»Рё 0-150')
-        imgui.Text(u8'/cstream - СѓРґР°Р»РёС‚СЊ РёРіСЂРѕРєРѕРІ РІ Р·РѕРЅРµ СЃС‚СЂРёРјР°')
+        imgui.Text(u8'/mus - включить ловлю предмета в мусорке')
+        imgui.Text(u8'/musv - установить слот для ловли 0-150')
+        imgui.Text(u8'/cstream - удалить игроков в зоне стрима')
         imgui.SetCursorPos(imgui.ImVec2(305, 0))
         if imgui.Button(fa.XMARK,imgui.ImVec2(20, 25)) then
             information[0] = not information[0]
@@ -644,7 +644,7 @@ local newFramee = imgui.OnFrame(
         imgui.PushItemWidth(100)
         imgui.InputText(u8"", authCode, 256, imgui.InputTextFlags.Password)
         imgui.PopItemWidth()
-        if imgui.Button(u8'РџСЂРѕРІРµСЂРёС‚СЊ', imgui.ImVec2(100, 25)) then
+        if imgui.Button(u8'Проверить', imgui.ImVec2(100, 25)) then
             local codeStr = u8:decode(ffi.string(authCode))
             local code = tonumber(codeStr)
             if code == 1337 then
@@ -672,7 +672,7 @@ imgui.OnFrame(
         imgui.PushFont(fontMenu)
         if isCharInAnyCar(PLAYER_PED) then
             imgui.Text(fa["HEART_PULSE"] .. ' ' .. getCarHealth(storeCarCharIsInNoSave(PLAYER_PED)))
-            imgui.Text(fa.DOOR_OPEN .. ' ' .. (getCarDoorLockStatus(storeCarCharIsInNoSave(PLAYER_PED)) == 0 and u8"РћС‚РєСЂС‹С‚Р°" or u8"Р—Р°РєСЂС‹С‚Р°"))
+            imgui.Text(fa.DOOR_OPEN .. ' ' .. (getCarDoorLockStatus(storeCarCharIsInNoSave(PLAYER_PED)) == 0 and u8"Открыта" or u8"Закрыта"))
         end
         imgui.PopFont()
         imgui.End()
@@ -686,12 +686,12 @@ imgui.OnInitialize(function()
     fontMenu = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14) .. '\\trebucbd.ttf', 17.0, nil, glyph_ranges)
     fa.Init(17)
     fontSoon = imgui.GetIO().Fonts:AddFontFromFileTTF(getFolderPath(0x14) .. '\\trebucbd.ttf', 12.0, nil, glyph_ranges)
-    if doesFileExist(getWorkingDirectory()..'\\Arizona Tools\\ava.png') then -- РЅР°С…РѕРґРёРј РЅРµРѕР±С…РѕРґРёРјСѓСЋ РєР°СЂС‚РёРЅРєСѓ СЃ РЅР°Р·РІР°РЅРёРµРј example.png РІ РїР°РїРєРµ moonloader/resource/
-        ava = imgui.CreateTextureFromFile(getWorkingDirectory() .. '\\Arizona Tools\\ava.png') -- РµСЃР»Рё РЅР°Р№РґРµРЅР°, С‚Рѕ Р·Р°РїРёСЃС‹РІР°РµРј РІ РїРµСЂРµРјРµРЅРЅСѓСЋ С…РµРЅРґР» РєР°СЂС‚РёРЅРєРё
+    if doesFileExist(getWorkingDirectory()..'\\Arizona Tools\\ava.png') then -- находим необходимую картинку с названием example.png в папке moonloader/resource/
+        ava = imgui.CreateTextureFromFile(getWorkingDirectory() .. '\\Arizona Tools\\ava.png') -- если найдена, то записываем в переменную хендл картинки
     end
     -- local glyph_ranges = imgui.GetIO().Fonts:GetGlyphRangesCyrillic()
-    -- local config = imgui.ImFontConfig() -- РЎРѕР·РґР°С‘Рј РЅРѕРІСѓСЋ РїСЂРµРјРµРЅРЅСѓСЋ Рё РїСЂРёСЃРІР°РёРІР°РµРј РµР№ РЅРѕРІС‹Р№ СЌРєР·РµРјРїР»СЏСЂ РєР»Р°СЃСЃР° ImFontConfig(). Р­С‚РѕС‚ РєР»Р°СЃСЃ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РЅР°СЃС‚СЂРѕР№РєРё РїР°СЂР°РјРµРЅС‚СЂРѕРІ С€СЂРёС„С‚Р°.
-    -- config.MergeMode = true -- РЎС‚Р°РІРёРј true, С‡С‚Рѕ РѕР·РЅР°С‡Р°РµС‚, С‡С‚Рѕ С€СЂРёС„С‚ Р±СѓРґРµС‚ РѕР±СЉРµРґРёРЅС‘РЅ СЃ РґСЂСѓРіРёРјРё С€СЂРёС„С‚Р°РјРё, РµСЃР»Рё РѕРЅРё СѓР¶Рµ Р±С‹Р»Рё РґРѕР±Р°РІР»РµРЅС‹ РІ Fonts
+    -- local config = imgui.ImFontConfig() -- Создаём новую пременную и присваиваем ей новый экземпляр класса ImFontConfig(). Этот класс используется для настройки параментров шрифта.
+    -- config.MergeMode = true -- Ставим true, что означает, что шрифт будет объединён с другими шрифтами, если они уже были добавлены в Fonts
     -- config.PixelSnapH = true
     -- imguiInferface.fontData.big = imgui.GetIO().Fonts:AddFontFromFileTTF('moonloader/resource/fonts/EagleSans Regular Regular.ttf', 64.0, nil, glyph_ranges)
     -- imgui.GetIO().Fonts:AddFontFromMemoryCompressedBase85TTF(fa.get_font_data_base85('solid'), 18, config, iconRanges)
@@ -916,7 +916,7 @@ setmetatable(imgui.ToggleButton, {
 	__call = imgui.ToggleButton.render
 })
 
--------------------Р’СЃРµ РґР»СЏ tooglebutton-------------
+-------------------Все для tooglebutton-------------
 function limit(arg_368_0, arg_368_1, arg_368_2)
 	arg_368_1 = arg_368_1 or 0
 	arg_368_2 = arg_368_2 or 1
@@ -1217,7 +1217,7 @@ function selMenuB(arg_696_0, arg_696_1, arg_696_2, arg_696_3, arg_696_4, arg_696
 	if var_696_4 then
 		imgui.PushFont(fontSoon)
 
-		local var_696_17 = u8(arg_696_5 or "РЎРєРѕСЂРѕ..")
+		local var_696_17 = u8(arg_696_5 or "Скоро..")
 		local var_696_18 = imgui.CalcTextSize(var_696_17).x
 
 		imgui.SetCursorPos(imgui.ImVec2(50 + var_696_15, var_696_10 + 11))
@@ -1315,8 +1315,9 @@ function main()
     sampRegisterChatCommand('helper', function () renderWindow[0] = not renderWindow[0] end)
     sampRegisterChatCommand('info', function () information[0] = not information[0] end)
     sampRegisterChatCommand('mus', function() musorLovlya = not musorLovlya end)
-    sampRegisterChatCommand('musv', function(arg) savedArg = tonumber(arg) sampAddChatMessage('РЈСЃС‚Р°РЅРѕРІР»РµРЅРѕ Р·РЅР°С‡РµРЅРёРµ СЃР»РѕС‚Р° ' .. savedArg,-1) end)
-    sampAddChatMessage("[ Arizona Helper ] {EEEEEE}РћС‚РєСЂС‹С‚СЊ РіР»Р°РІРЅРѕРµ РјРµРЅСЋ: /helper", 13387077)
+    sampRegisterChatCommand('musv', function(arg) savedArg = tonumber(arg) sampAddChatMessage('Установлено значение слота ' .. savedArg,-1) end)
+    sampAddChatMessage("[ Arizona Helper ] {EEEEEE}Открыть главное меню: /helper", 13387077)
+    sampAddChatMessage("[ Arizona Helper ] {EEEEEE}Скачивание из github", 13387077)
     serverTime()
     fWallhackNickname()
     initializeRender()
@@ -1333,7 +1334,7 @@ function main()
         if isKeyJustPressed(key.VK_DELETE) then
             renderWindow[0] = not renderWindow[0]
         end
-        ----------------------------РћСЃРЅРѕРІРЅРѕРµ--------------------
+        ----------------------------Основное--------------------
         if state and settings.player.autoDeltShar[0] then
 			local command = "clickMinigame"
 			local bs = raknetNewBitStream()
@@ -1350,7 +1351,7 @@ function main()
         local text = sampGetChatInputText()
         if text:find('%d+') and text:find('[-+/*^%%]') and not text:find('[%a]+') and text ~= nil then
             ok, number = pcall(load('return '..text))
-            result = 'Р РµР·СѓР»СЊС‚Р°С‚: '..number
+            result = 'Результат: '..number
         else
             ok = false
         end
@@ -1363,7 +1364,7 @@ function main()
         ------------------Replace Nickname(visual)-------------
         oldname = sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED)))
         oldname1 = oldname:gsub("_"," ")
-        ------------------РҐРµР»РїРµСЂС‹---------------------
+        ------------------Хелперы---------------------
 
         if settings.helpers.radiusTravki[0] then
             for index, v in pairs(getAllObjects()) do
@@ -1379,7 +1380,7 @@ function main()
         for id = 0, 4096 do
             if sampIs3dTextDefined(id) then
                 local text, color, posX, posY, posZ, distance, ignoreWalls, player, vehicle = sampGet3dTextInfoById(id)
-                if settings.helpers.narko[0] then renderObjectsName('Р—Р°РєР»Р°РґРєР°', text, 'Р—Р°РєР»Р°РґРєР°', posX, posY, posZ) end
+                if settings.helpers.narko[0] then renderObjectsName('Закладка', text, 'Закладка', posX, posY, posZ) end
             end
         end
 
@@ -1411,7 +1412,7 @@ function main()
             local currentSecond = os.date("%S", os.time())
             if ((currentMinute == "55" or currentMinute == "31") and currentSecond == "40") then
                 --if sampGetPlayerColor(tagReplacements.my_id()) == 368966908 then
-                    sampAddChatMessage('[ Arizona Helper ] {EEEEEE}Р§РµСЂРµР· 5 РјРёРЅСѓС‚ Р±СѓРґРµС‚ PAYDAY. РќР°РґРµРЅСЊС‚Рµ С„РѕСЂРјСѓ С‡С‚РѕР±С‹ РЅРµ РїСЂРѕРїСѓСЃС‚РёС‚СЊ Р·Р°СЂРїР»Р°С‚Сѓ!', 13387077)
+                    sampAddChatMessage('[ Arizona Helper ] {EEEEEE}Через 5 минут будет PAYDAY. Наденьте форму чтобы не пропустить зарплату!', 13387077)
                     wait(1000)
                 --end
             end
@@ -1460,7 +1461,7 @@ function main()
         if autoBufferClear[0] then
             if memory.read(0x8E4CB4, 4, true) > 419430400 then
                 cleanStreamMemoryBuffer()
-                sampAddChatMessage("[Cleaner]  {d5dedd}РћС‡РёСЃС‚РєР° Р±СѓС„С„РµСЂР° РїСЂРѕРёР·РѕС€Р»Р° СѓСЃРїРµС€РЅРѕ!", 0x01A0E9)
+                sampAddChatMessage("[Cleaner]  {d5dedd}Очистка буффера произошла успешно!", 0x01A0E9)
             end
         end
         if carFlip[0] then
@@ -1580,7 +1581,7 @@ function fWallhackNickname()
     local pStSet = sampGetServerSettingsPtr()
     local NTdist, NTwalls, NTshow
     if settings.player.wallhackNickname[0] then
-        --notf.Notification(u8"Р’С… РЅР° РЅРёРєРё", u8"Р’РєР»СЋС‡РµРЅРѕ", "success", 1.0)
+        --notf.Notification(u8"Вх на ники", u8"Включено", "success", 1.0)
         memory.setfloat(pStSet + 39, 1488.0)
         memory.setint8(pStSet + 47, 0)
         memory.setint8(pStSet + 56, 1)
@@ -1714,7 +1715,7 @@ function setWorldTime(hour)
 		-- end
 		return nil
 	end
-	sampAddChatMessage("РСЃРїРѕР»СЊР·СѓР№С‚Рµ: {EEEEEE}/st [0 - 23 РёР»Рё OFF]", 0xFFDD90)
+	sampAddChatMessage("Используйте: {EEEEEE}/st [0 - 23 или OFF]", 0xFFDD90)
 end
 
 function setWorldWeather(id)
@@ -1729,7 +1730,7 @@ function setWorldWeather(id)
 		raknetDeleteBitStream(bs)
 		return nil
 	end
-	sampAddChatMessage("РСЃРїРѕР»СЊР·СѓР№С‚Рµ: {EEEEEE}/sw [0 - 45 РёР»Рё OFF]", 0xFFDD90)
+	sampAddChatMessage("Используйте: {EEEEEE}/sw [0 - 45 или OFF]", 0xFFDD90)
 end
 
 serverTime = function ()
@@ -1811,7 +1812,7 @@ function clear_stream()
 			var_1057_1 = var_1057_1 + 1
 		end
 	end
-    sampAddChatMessage('РЈРґР°Р»РµРЅРѕ [ {00D26A}' .. var_1057_0 .. '{EEEEEE} РїРµРґРѕРІ ] Рё [ {00D26A}' .. var_1057_1 ..'{EEEEEE} Р°РІС‚Рѕ ]', -1)
+    sampAddChatMessage('Удалено [ {00D26A}' .. var_1057_0 .. '{EEEEEE} педов ] и [ {00D26A}' .. var_1057_1 ..'{EEEEEE} авто ]', -1)
 end
 
 function cmd_cjrun()
@@ -1830,7 +1831,7 @@ function cmd_cjrun()
         raknetBitStreamWriteInt32(bs, idskin)
         raknetEmulRpcReceiveBitStream(153, bs)
         raknetDeleteBitStream(bs)
-    end -- m.setuint8(sampGetServerSettingsPtr(), 1) С‚РѕР¶Рµ РІСЂСѓР±Р°РµС‚ cj run Р±РµР· РёР·РјРµРЅРµРЅРёСЏ СЃРєРёРЅР°
+    end -- m.setuint8(sampGetServerSettingsPtr(), 1) тоже врубает cj run без изменения скина
 end
 
 -----------CLICKWARP----------------
@@ -2003,7 +2004,7 @@ function cleanStreamMemoryBuffer()
     loadScene(pX, pY, pZ)
 end
 
-------РџР°РєРµС‚С‹/СЂРїСЃ logger------
+------Пакеты/рпс logger------
 
 function onReceivePacket(id, bitStream)
     name = raknetGetPacketName(id)
@@ -2075,7 +2076,7 @@ function cmd_json()
 
     local json_data = decodeJson(a)
     if thisScript().version < json_data.keys then
-        print('Р”РѕСЃС‚СѓРїРЅРѕ РѕР±РЅРѕРІР»РµРЅРёРµ')
+        print('Доступно обновление')
     end
     print(json_data.keys)
 end
@@ -2132,7 +2133,7 @@ function sampev.onShowDialog(dialogId, style, title, button1, button2, text)
     end
     
     if autoAzticket[0] then
-        if text:find('%{......%}РЈ Р’Р°СЃ РµС‰Рµ РёРјРµСЋС‚СЃСЏ РЅРµРѕС‚РєСЂС‹С‚С‹Рµ Р±РёР»РµС‚С‹, Р¶РµР»Р°РµС‚Рµ РїСЂРѕРґРѕР»Р¶РёС‚СЊ РѕС‚РєСЂС‹РІР°С‚СЊ%?') then
+        if text:find('%{......%}У Вас еще имеются неоткрытые билеты, желаете продолжить открывать%?') then
             lua_thread.create_suspended(function()
                 wait(4000)
                 sampSendDialogResponse(id, 1, 0, 0)
@@ -2146,7 +2147,7 @@ function sampev.onServerMessage(color, text)
 		text = separator(text)
 		--return {color, text}
 	end
-    local playerMessageText, _ = string.match(text, "^[A-z0-9_]+%[(%d+)%] РіРѕРІРѕСЂРёС‚:{B7AFAF} (.+)")
+    local playerMessageText, _ = string.match(text, "^[A-z0-9_]+%[(%d+)%] говорит:{B7AFAF} (.+)")
 	local playerText = tonumber(playerMessageText)
     if playerText ~= nil then
         if settings.main.chat_nick[0] then
@@ -2192,7 +2193,7 @@ function sampev.onShowTextDraw(id, data)
         end
     end
     if settings.main.moneySeperator[0] then
-		if id == 2070 or id == 2077  then -- СЂР°Р·РґРµР»РµРЅРёРµ С†РµРЅ РІ С‚СЂРµР№РґРµ
+		if id == 2070 or id == 2077  then -- разделение цен в трейде
 			if tonumber(data.text) then
 				data.text = comma_value(data.text)
 			end
@@ -2210,7 +2211,7 @@ end
 
 function sampev.onSendChat(text)
     if test[0] then
-        sampAddChatMessage("Р§Р°С‚ (T) Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ", -1)
+        sampAddChatMessage("Чат (T) заблокирован", -1)
         return false
     end
 end
@@ -2232,7 +2233,7 @@ end
 
 addEventHandler('onWindowMessage', function(msg, wparam, lparam) -- local wm = require('window.message')?
     if wparam == 27 then
-        if renderWindow[0] or packetsWindow[0] then -- РїРѕС‡РµРјСѓ Р±С‹ РЅРµ РєРѕРїРёСЂРѕРІР°С‚СЊ РєРѕРґ, РЅРµ СЃРјРѕС‚СЂСЏ РІ РєРѕРґ СЃРЅРёРїРїРµС‚Р°/С„СѓРЅРєС†РёРё?
+        if renderWindow[0] or packetsWindow[0] then -- почему бы не копировать код, не смотря в код сниппета/функции?
             if msg == wm.WM_KEYDOWN then
                 consumeWindowMessage(true, false)
             end
@@ -2308,7 +2309,7 @@ addEventHandler('onReceivePacket', function(id, bs)
             local encoded = raknetBitStreamReadInt8(bs)
             local str = (encoded ~= 0) and raknetBitStreamDecodeString(bs, length + encoded) or raknetBitStreamReadString(bs, length)
             if settings.player.autoDeltShar[0] then
-                if str == "window.executeEvent('cef.modals.showModal', `[\"interactionSidebar\",{\"title\": \"РЎРѕР±СЂР°С‚СЊ РґРµР»СЊС‚Р°РїР»Р°РЅ\",\"description\":\"\",\"timer\":7,\"buttons\":[{\"title\": \"Р”РµР№СЃС‚РІРёРµ\",\"keyTitle\": \"N\",\"buttonColor\": \"#ffffff\",\"backgroundColor\": \"rgba(171, 171, 171, 0.15)\"}]}]`);" then
+                if str == "window.executeEvent('cef.modals.showModal', `[\"interactionSidebar\",{\"title\": \"Собрать дельтаплан\",\"description\":\"\",\"timer\":7,\"buttons\":[{\"title\": \"Действие\",\"keyTitle\": \"N\",\"buttonColor\": \"#ffffff\",\"backgroundColor\": \"rgba(171, 171, 171, 0.15)\"}]}]`);" then
                     lua_thread.create(function ()
                         wait(500)
                         setVirtualKeyDown(0x4E, true)
@@ -2318,7 +2319,7 @@ addEventHandler('onReceivePacket', function(id, bs)
                 end
             end
             if str == 'window.executeEvent(\'event.arizonahud.vehicleLiters\', `[15]`);' then
-                messageScript('РЈ РІР°С€РµРіРѕ Р°РІС‚РѕРјРѕР±РёР»СЏ РјРµРЅСЊС€Рµ 15 С‚РѕРїР»РёРІРѕ. Р РµРєРѕРјРµРЅРґСѓРµС‚СЃСЏ Р·Р°РїСЂР°РІРёС‚СЃСЏ.')
+                messageScript('У вашего автомобиля меньше 15 топливо. Рекомендуется заправится.')
             end
             if autoFill[0] then
                 local litersStr = str:match("window.executeEvent%('event.gasstation.initializeCurrentLiters', `%[(%d+)%]`%);")
@@ -2326,22 +2327,22 @@ addEventHandler('onReceivePacket', function(id, bs)
                 if litersStr then
                     local correctLiters = tonumber(litersStr)
                     if correctLiters and correctLiters > 0 then
-                        --sampAddChatMessage('Р’СЃРµРіРѕ С‚РѕРїР»РёРІР°: ' .. correctLiters, -1)
+                        --sampAddChatMessage('Всего топлива: ' .. correctLiters, -1)
                         fillLiters = 100 - correctLiters
                         send_cef('purchaseFuel|1|' .. fillLiters)
                     end
                 end
             end
-            -- if str == 'window.executeEvent%(\'event.notify.initialize\', `%["error","РџР РћРўРћРљРћР› РџРћР›РЁР•Р‘РЎРўР’Рђ","РЈР»СѓС‡С€Р°С‚СЊ Р·Р° РґР°РЅРЅСѓСЋ РІР°Р»СЋС‚Сѓ РјРѕР¶РЅРѕ С‡РµСЂРµР· (%d%d):(%d%d)",3500%]`%);' then
+            -- if str == 'window.executeEvent%(\'event.notify.initialize\', `%["error","ПРОТОКОЛ ПОЛШЕБСТВА","Улучшать за данную валюту можно через (%d%d):(%d%d)",3500%]`%);' then
             --     sampAddChatMessage(str, -1)
             -- end
             local h, m = str:match("(%d%d):(%d%d)")
             -- if h then
-            --     sampAddChatMessage("Р’СЂРµРјСЏ: " .. h .. ":" .. m, -1)
+            --     sampAddChatMessage("Время: " .. h .. ":" .. m, -1)
             -- end
         end
     end
-end) --window.executeEvent('event.notify.initialize', `["error","РџР РћРўРћРљРћР› РџРћР›РЁР•Р‘РЎРўР’Рђ","РЈР»СѓС‡С€Р°С‚СЊ Р·Р° РґР°РЅРЅСѓСЋ РІР°Р»СЋС‚Сѓ РјРѕР¶РЅРѕ С‡РµСЂРµР· 02:30",3500]`);
+end) --window.executeEvent('event.notify.initialize', `["error","ПРОТОКОЛ ПОЛШЕБСТВА","Улучшать за данную валюту можно через 02:30",3500]`);
 
 -----------Replace Nickname-----------
 function changer(text)
@@ -2355,7 +2356,7 @@ function changer(text)
 	return text
 end
 
---------------Р РµРЅРґРµСЂ--------------------
+--------------Рендер--------------------
 function renderObjectsName(object, text, textRender, posX, posY, posZ)
     if text:find(object) then
         if isPointOnScreen(posX, posY, posZ, 1) then
@@ -2383,7 +2384,7 @@ function renderObjId(v, textRender)
     end
 end
 
-------------------------Р¦РІРµС‚Р°-------------------------
+------------------------Цвета-------------------------
 function join_argb(a, r, g, b)
     local color = b
     color = bit.bor(color, bit.lshift(g, 8))
@@ -2443,7 +2444,7 @@ function PurpleTheme()
     colors[clr.ChildBg]                = ImVec4(0.17, 0.18, 0.43, 1.00)
     colors[clr.PopupBg]                = ImVec4(0.15, 0.16, 0.37, 1.00)
 
-    colors[clr.Border]                 = ImVec4(0.33, 0.34, 0.62, 0.00) -- СЂР°РјРєРё
+    colors[clr.Border]                 = ImVec4(0.33, 0.34, 0.62, 0.00) -- рамки
     colors[clr.BorderShadow]           = ImVec4(0.00, 0.00, 0.00, 0.00)
 
     colors[clr.TitleBg]                = ImVec4(0.18, 0.20, 0.46, 1.00)
